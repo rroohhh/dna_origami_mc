@@ -1,6 +1,6 @@
 import numba
 import numpy as np
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from typing import *
 
 Base = int
@@ -128,17 +128,17 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
                 # select random point in between 
                 adaptionPointIdx = np.random.randint(min(lowerStickIdx, upperStickIdx) + 1, max(lowerStickIdx, upperStickIdx))
                 adaptionPoint = otherMolecule.points[adaptionPointIdx]
-                a = upperStickMainPoint.coords - adaptionPoint.coords
+                a = adaptionPoint.coords - upperStickMainPoint.coords
                 b = adaptionPoint.coords - lowerStickMainPoint.stickToPoint.coords
                 maximumDistance = np.linalg.norm(a) + np.linalg.norm(b)
                 if maximumDistance < newDistance:
                     newDistance = maximumDistance
                 
                 # figure out the angle to stretch the otherMolecule between the two sticking points to the new distance
-                cosα = cosAngleBetween(a, c)
-                sinα = (1 - cosα**2)**(1/2)
-                newβ = np.arcsin(newDistance * sinα / np.linalg.norm(b))
-                oldβ = np.arccos(cosAngleBetween(-a, b))
+
+                newcosβ = (np.linalg.norm(a)**2 + np.linalg.norm(b)**2 - newDistance**2) / (2 * np.linalg.norm(a) * np.linalg.norm(b))
+                newβ = np.arccos(newcosβ)
+                oldβ = np.arccos(cosAngleBetween(a, b))
                 adaptionΔAngle = newβ - oldβ
 
                 rotatePointsAround(adaptionPoint, otherMolecule.points[lowerStickIdx:adaptionPointIdx], adaptionΔAngle)
@@ -146,7 +146,7 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
                 # correct the orientation of the otherMolecule to fit the mainMolecule
                 otherOrientation = otherMolecule.points[lowerStickIdx].coords - upperStickMainPoint.coords
                 mainOrientation = lowerStickMainPoint.coords - upperStickMainPoint.coords
-                orientationΔAngle = -np.arccos(cosAngleBetween(otherOrientation, mainOrientation))
+                orientationΔAngle = np.arccos(cosAngleBetween(otherOrientation, mainOrientation))
                 rotatePointsAround(upperStickMainPoint, otherMolecule.points[0:upperStickIdx], orientationΔAngle)
 
                 # TODO(robin): figure out if we need to adapt the orientation of the part of the otherMolecule below the lower sticking point
