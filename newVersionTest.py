@@ -7,7 +7,7 @@ except:
     pass
 from typing import *
 
-np.random.seed(0)
+np.random.seed(1)
 
 Base = int
 
@@ -195,7 +195,7 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
             for k, pointA in enumerate(moleculeA.points):
                 for l, pointB in enumerate(moleculeB.points):
                     if (pointA.base + pointB.base == 0) and (np.linalg.norm(pointA.coords - pointB.coords) < rCutoff):
-                        if pointA.stickToId is None:
+                        if pointA.stickToId is None and pointB.stickToId is None:
                             pointA.stickToId = pointB.id
                             pointA.stickToPointIdx = (j, l)
                             pointB.stickToId = pointA.id
@@ -287,7 +287,7 @@ for i in range(numberOfScaffoldNucleotides):
 
 for i in range(numberOfStapleNucleotides):
     staple[i][0] = stapleNucleotide[i]
-    staple[i][1] = -(boxSize / 4) + baseSpacing * i + 4 +0.25
+    staple[i][1] = -(boxSize / 4) + baseSpacing * i + 10 +0.25
     staple[i][2] = +(boxSize / 4) - 3
 
 
@@ -316,7 +316,7 @@ if __name__ == '__main__':
         r = np.random.rand()
 
         if r < np.minimum(1., np.exp(-ΔH / T)):
-            print("accepted")
+            print("accepted", molecules)
             molecules = newMolecules
             oldH += ΔH
             for molecule in molecules:
