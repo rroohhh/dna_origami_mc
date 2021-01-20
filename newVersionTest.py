@@ -260,8 +260,6 @@ def H(molecules):
     return H
 
 dimension = 2
-numberOfScaffoldNucleotides = 5
-numberOfStapleNucleotides = 3
 
 baseSpacing = 1
 rCutoff = 0.2 #baseSpacing /4
@@ -271,14 +269,17 @@ rCutoffLocalForce = rCutoff * 4
 α = 0.1
 T = 1 / 100
 angleSigma = 0.1
-boxSize = 2 * (numberOfScaffoldNucleotides + numberOfStapleNucleotides) * baseSpacing
-scaffold = np.zeros((numberOfScaffoldNucleotides, dimension + 1))
-staple = np.zeros((numberOfStapleNucleotides, dimension + 1))
 
 removeBondProb = 0.1
 
-scaffoldNucleotide = [Bases.A, Bases.A, Bases.A, Bases.C, Bases.C]
-stapleNucleotide = [Bases.T, Bases.T, Bases.T]
+scaffoldNucleotide = [Bases.T, *([Bases.C]*5), Bases.A, *([Bases.C]*5), Bases.T]
+stapleNucleotide = [Bases.A, *([Bases.C]*5), Bases.T, *([Bases.C]*5), Bases.A]
+
+numberOfScaffoldNucleotides = len(scaffoldNucleotide)
+numberOfStapleNucleotides = len(stapleNucleotide)
+boxSize = 2 * (numberOfScaffoldNucleotides + numberOfStapleNucleotides) * baseSpacing
+scaffold = np.zeros((numberOfScaffoldNucleotides, dimension + 1))
+staple = np.zeros((numberOfStapleNucleotides, dimension + 1))
 
 for i in range(numberOfScaffoldNucleotides):
     scaffold[i][0] = scaffoldNucleotide[i]
