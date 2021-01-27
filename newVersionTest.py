@@ -1,4 +1,5 @@
 import numba
+import sys
 import copy
 import numpy as np
 try:
@@ -7,7 +8,7 @@ except:
     pass
 from typing import *
 
-np.random.seed(1)
+np.random.seed(2)
 
 Base = int
 
@@ -75,33 +76,43 @@ def arccos(angle):
     if np.isclose(angle, -1.0) and angle < 1.0:
         angle = -1.0
 
-    return np.arccos(angle)
+    try:
+        a = np.arccos(angle)
+        return a
+    except:
+        print("bad angle", angle)
+        return 0.
+
 
 def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None, baseIdx = None, ΔAngle = None, down = None):
+    dont = False
+
+    stickPoints = []
+    for molecule in moleculesIn:
+        for point in molecule.points:
+            if point.stickToId is not None:
+                stickPoints.append(point)
+
+    oldNumberOfSticks = len(stickPoints)
+
     # sticking together stuff
     if removeBond is None:
         removeBond = np.random.rand() > 1 - removeBondProb
-        if removeBond:
-            stickPoints = []
-            for molecule in moleculesIn:
-                for point in molecule.points:
-                    if point.stickToId is not None:
-                        stickPoints.append(point)
-
-            if len(stickPoints) > 0:
-                toDelete = stickPoints[np.random.randint(0, len(stickPoints))] 
-                other = moleculesIn[toDelete.stickToPointIdx[0]].points[toDelete.stickToPointIdx[1]]
-                other.stickToId = None
-                other.stickToPointIdx = None
-                toDelete.stickToId = None
-                toDelete.stickToPointIdx = None
+    if removeBond:
+        if len(stickPoints) > 0:
+            toDelete = stickPoints[np.random.randint(0, len(stickPoints))]
+            other = moleculesIn[toDelete.stickToPointIdx[0]].points[toDelete.stickToPointIdx[1]]
+            other.stickToId = None
+            other.stickToPointIdx = None
+            toDelete.stickToId = None
+            toDelete.stickToPointIdx = None
 
     # rotate
     if moleculeIdx is None:
         moleculeIdx = np.random.randint(0, len(moleculesIn))
     if baseIdx is None:
-        baseIdx = np.random.randint(0, len(moleculesIn[moleculeIdx].points))
-    
+        baseIdx = np.random.randint(0, len(moleculesIn[moleculeIdx].points) - 1)
+
     molecules = moleculesIn
 
     if down is None:
@@ -124,9 +135,6 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
         lowerStickMainPoint, lowerStickIdx = findStickingIdx(mainMolecule.points[0:baseIdx][::-1], otherMolecule.ids())
         upperStickMainPoint, upperStickIdx = findStickingIdx(mainMolecule.points[baseIdx:], otherMolecule.ids())
 
-        # print(f"lowerStickIdx: {lowerStickIdx}, lowerStickMainPoint: {lowerStickMainPoint}")
-        # print(f"upperStickIdx: {upperStickIdx}, upperStickMainPoint: {upperStickMainPoint}")
-
         if upperStickIdx is None:
             continue
         else:
@@ -135,13 +143,13 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
             if lowerStickIdx is not None:
                 low = min(lowerStickIdx, upperStickIdx) + 1
                 high = max(lowerStickIdx, upperStickIdx)
+
                 if low < high:
-                    # TODO check what happens if there is no point in between the sticking points
                     # calc distance between both sticking points
                     c = lowerStickMainPoint.coords - upperStickMainPoint.coords
                     newDistance = np.linalg.norm(c)
 
-                    # select random point in between 
+                    # select random point in between
                     adaptionPointIdx = np.random.randint(min(lowerStickIdx, upperStickIdx) + 1, max(lowerStickIdx, upperStickIdx))
                     adaptionPoint = otherMolecule.points[adaptionPointIdx]
                     a = adaptionPoint.coords - upperStickMainPoint.coords
@@ -149,20 +157,16 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
                     maximumDistance = np.linalg.norm(a) + np.linalg.norm(b)
                     if maximumDistance < newDistance:
                         newDistance = maximumDistance
-                    
-                    # figure out the angle to stretch the otherMolecule between the two sticking points to the new distance
+                        dont = True
 
+                    # figure out the angle to stretch the otherMolecule between the two sticking points to the new distance
                     newcosβ = (np.linalg.norm(a)**2 + np.linalg.norm(b)**2 - newDistance**2) / (2 * np.linalg.norm(a) * np.linalg.norm(b))
                     newβ = arccos(newcosβ)
                     oldβ = arccos(cosAngleBetween(a, b))
                     adaptionΔAngle = newβ - oldβ
 
                     clockwiseOldβ = clockwiseAngleBetween(a, b)
-                    # print(newβ * 180 / np.pi, oldβ * 180 / np.pi, adaptionΔAngle * 180 / np.pi, clockwiseOldβ * 180 / np.pi)
-                    # print(a, b)
                     adaptionΔAngle *= np.sign(clockwiseOldβ)
-
-                    # adaptionΔAngle *= -np.sign(np.dot(a, b))
 
                     rotatePointsAround(adaptionPoint, otherMolecule.points[0:adaptionPointIdx], adaptionΔAngle)
 
@@ -170,12 +174,13 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
                 otherOrientation = otherMolecule.points[lowerStickIdx].coords - upperStickMainPoint.coords
                 mainOrientation = lowerStickMainPoint.coords - upperStickMainPoint.coords
                 orientationΔAngle = arccos(cosAngleBetween(otherOrientation, mainOrientation))
+                clockwiseOrientationΔAngle = clockwiseAngleBetween(otherOrientation, mainOrientation)
 
-                upperStickOtherPoint = moleculesIn[upperStickMainPoint.stickToPointIdx[0]].points[upperStickMainPoint.stickToPointIdx[1]]   
-                rotatePointsAround(upperStickOtherPoint , otherMolecule.points[0:upperStickIdx], orientationΔAngle)
+                upperStickOtherPoint = moleculesIn[upperStickMainPoint.stickToPointIdx[0]].points[upperStickMainPoint.stickToPointIdx[1]]
+                rotatePointsAround(upperStickOtherPoint, otherMolecule.points[0:upperStickIdx], orientationΔAngle * np.sign(clockwiseOrientationΔAngle))
 
-                # TODO(robin): figure out if we need to adapt the orientation of the part of the otherMolecule below the lower sticking point
 
+    newNumberOfSticks = 0
     # find the old bonds that got broken due to being moved too far away
     for molecule in molecules:
         for point in molecule.points:
@@ -186,7 +191,10 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
                     other.stickToPointIdx = None
                     point.stickToId = None
                     point.stickToPointIdx = None
+                else:
+                    newNumberOfSticks += 1
 
+    realNewSticks = 0
     # search for new bonds if the points get close
     for i, moleculeA in enumerate(moleculesIn):
         for j, moleculeB in enumerate(moleculesIn):
@@ -196,6 +204,8 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
                 for l, pointB in enumerate(moleculeB.points):
                     if (pointA.base + pointB.base == 0) and (np.linalg.norm(pointA.coords - pointB.coords) < rCutoff):
                         if pointA.stickToId is None and pointB.stickToId is None:
+                            newNumberOfSticks += 2
+                            realNewSticks += 1
                             pointA.stickToId = pointB.id
                             pointA.stickToPointIdx = (j, l)
                             pointB.stickToId = pointA.id
@@ -205,14 +215,13 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
     if down:
         molecules = [molecule.reversed() for molecule in molecules]
 
-    # shift back everything to have the first point of the first molecule at (0, 0) 
+    # shift back everything to have the first point of the first molecule at (0, 0)
     origin = molecules[0].points[0].coords
     for molecule in molecules:
         for point in molecule.points:
             point.coords = point.coords - origin
 
-#    for i, molecule in enumerate(molecules):
-#        moleculesIn[i] = molecule
+    return dont or ((oldNumberOfSticks > newNumberOfSticks) and not removeBond), realNewSticks
 
 def clockwiseAngleBetween(a, b) -> float:
     return np.arctan2(a[0] * b[1] - a[1] * b[0], np.dot(a, b))
@@ -234,7 +243,7 @@ def rotatePointsAround(origin, points, ΔAngle):
 
 def rotateAround(origin, point, ΔAngle):
     offset = point - origin
-    newOffset = np.zeros_like(offset)
+    newOffset = np.zeros_like(offset, dtype=np.float64)
     newOffset[0] =  np.cos(ΔAngle) * offset[0] - np.sin(ΔAngle) * offset[1]
     newOffset[1] =  np.sin(ΔAngle) * offset[0] + np.cos(ΔAngle) * offset[1]
     return origin + newOffset
@@ -246,7 +255,8 @@ def H(molecules):
             if point.stickToId is not None:
                 other = molecules[point.stickToPointIdx[0]].points[point.stickToPointIdx[1]]
                 r = np.linalg.norm(point.coords - other.coords)
-                H += β * (r**bindingPower - rCutoff**bindingPower )
+                # maybe lennard jones?
+                H += β * (r**bindingPower - rCutoff**bindingPower)
 
         for moleculeB in molecules:
             if moleculeA == moleculeB:
@@ -259,27 +269,34 @@ def H(molecules):
 
     return H
 
+
 dimension = 2
 
 baseSpacing = 1
 rCutoff = 0.2 #baseSpacing /4
-β = 1
+β = 10
 bindingPower = 4
 rCutoffLocalForce = rCutoff * 4
-α = 0.1
+α = 0.001
 T = 1 / 100
-angleSigma = 0.1
+if len(sys.argv) > 1:
+    T = float(sys.argv[1])
+angleSigma = 1.0
 
 removeBondProb = 0.1
 
-scaffoldNucleotide = [Bases.T, *([Bases.C]*5), Bases.A, *([Bases.C]*5), Bases.T]
-stapleNucleotide = [Bases.A, *([Bases.C]*5), Bases.T, *([Bases.C]*5), Bases.A]
+# figure eight
+# scaffoldNucleotide = [Bases.T, *([Bases.C]*5), Bases.A, *([Bases.C]*5), Bases.T]
+# stapleNucleotide = [Bases.A, *([Bases.C]*5), Bases.T, *([Bases.C]*5), Bases.A]
+
+scaffoldNucleotide = [*([Bases.T] * 10)]
+stapleNucleotide = [*([Bases.A] * 5)]
 
 numberOfScaffoldNucleotides = len(scaffoldNucleotide)
 numberOfStapleNucleotides = len(stapleNucleotide)
 boxSize = 2 * (numberOfScaffoldNucleotides + numberOfStapleNucleotides) * baseSpacing
-scaffold = np.zeros((numberOfScaffoldNucleotides, dimension + 1))
-staple = np.zeros((numberOfStapleNucleotides, dimension + 1))
+scaffold = np.zeros((numberOfScaffoldNucleotides, dimension + 1), dtype=np.float64)
+staple = np.zeros((numberOfStapleNucleotides, dimension + 1), dtype=np.float64)
 
 for i in range(numberOfScaffoldNucleotides):
     scaffold[i][0] = scaffoldNucleotide[i]
@@ -309,30 +326,41 @@ if __name__ == '__main__':
 
     oldH = H(molecules)
     Hs = []
+    sticks = []
+    j = 0
     for i in range(10000):
         newMolecules = copy.deepcopy(molecules) # .copy()
-        mutate(newMolecules)
+        dont, realNewSticks = mutate(newMolecules)
         ΔH = H(newMolecules) - oldH
-        print(oldH, ΔH)
+        # print(oldH, ΔH)
         r = np.random.rand()
 
-        if r < np.minimum(1., np.exp(-ΔH / T)):
-            print("accepted", molecules)
+        newSticks = 0
+        if r < np.minimum(1., np.exp(-ΔH / T)) and not dont:
+            # print("accepted", molecules)
+            j += 1
             molecules = newMolecules
             oldH += ΔH
-            for molecule in molecules:
-                print("new lengths:", [np.linalg.norm(a.coords - b.coords) for a, b in zip(molecule.points[1:], molecule.points[:-1])])
+            newSticks = realNewSticks
+            # for molecule in molecules:
+            #     print("new lengths:", [np.linalg.norm(a.coords - b.coords) for a, b in zip(molecule.points[1:], molecule.points[:-1])])
 
         Hs.append(oldH)
+        sticks.append(newSticks)
 
-        if (i % 30 == 0):
-            plt.clf()
-            for molecule in molecules:
-                molecule.plot(molecules)
-            plt.xlim(-boxSize/2, boxSize/2)
-            plt.ylim(-boxSize/2, boxSize/2)
-            plt.pause(0.0001)
+        # if (j % 30 == 0):
+            # plt.clf()
+            # for molecule in molecules:
+            #     molecule.plot(molecules)
+            # plt.xlim(-boxSize/2, boxSize/2)
+            # plt.ylim(-boxSize/2, boxSize/2)
+            # plt.pause(0.0001)
 
-    plt.figure()
-    plt.plot(Hs)
-    plt.show()
+    # plt.figure()
+    # plt.plot(Hs)
+    # plt.figure()
+    # plt.plot(sticks)
+    # plt.show()
+print(np.sum(sticks))
+
+    # bindungsrate
