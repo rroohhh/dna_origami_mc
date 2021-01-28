@@ -8,7 +8,7 @@ except:
     pass
 from typing import *
 
-np.random.seed(2)
+# np.random.seed(2)
 
 Base = int
 
