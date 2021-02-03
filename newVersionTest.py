@@ -7,6 +7,10 @@ try:
 except:
     pass
 from typing import *
+import logging
+
+numba_logger = logging.getLogger('numba')
+numba_logger.setLevel(logging.DEBUG)
 
 # np.random.seed(2)
 
@@ -18,6 +22,7 @@ class Bases:
     C: Base = -2
     T: Base = -1
 
+@numba.jitclass([("id", numba.int32), ("stickToId", numba.optional(numba.int32)), ("stickToPointIdx", numba.optional(numba.int64[:])), ("base", numba.int32), ("coords", numba.float64[:])])
 class Point:
     id: int
     stickToId: int
@@ -28,20 +33,20 @@ class Point:
     def __repr__(self):
         return f"(Point id={self.id}, stickToId={self.stickToId}, base={self.base}, coords={self.coords})"
 
-    def __init__(self, *, id, coords, base):
+    def __init__(self, id, coords, base):
         self.id = id
         self.stickToId = None
         self.stickToPointIdx = None
         self.base = base
         self.coords = coords
 
-    def copyWithCoords(self, coords):
-        p = Point(id = self.id, coords = coords, base = self.base)
-        p.stickToId = self.stickToId
-        p.stickToPointIdx = self.stickToPointIdx
+    # def copy(self):
+    #     p = Point(id = self.id, coords = self.coords.copy(), base = self.base)
+    #     p.stickToId = self.stickToId
+    #     p.stickToPointIdx = self.stickToPointIdx.copy()
+    #     return p
 
-        return p
-
+@numba.jitclass([("points", numba.types.ListType(Point.class_type.instance_type))])
 class Molecule:
     # first id from ourselves, second id from other molecule
     points: List[Point]
@@ -55,8 +60,20 @@ class Molecule:
     def ids(self) -> [int]:
         return [point.id for point in self.points]
 
-    def reversed(self):
-        return Molecule(self.points[::-1])
+    # def reversed(self):
+    #     return Molecule(self.points[::-1])
+
+    def copy(self):
+        newPoints = numba.typed.List()
+        for point in self.points:
+            p = Point(point.id, point.coords.copy(), point.base)
+            p.stickToId = point.stickToId
+
+            if point.stickToPointIdx is not None:
+                p.stickToPointIdx = point.stickToPointIdx.copy()
+
+            newPoints.append(p)
+        return Molecule(newPoints)
 
     def plot(self, molecules):
         x = [point.coords[0] for point in self.points]
@@ -70,10 +87,18 @@ class Molecule:
                 label = str(point.id) + "<->" + str(other.id)
                 plt.plot([point.coords[0]], [point.coords[1]], marker = "x", color = "black", label = label)
 
+@numba.extending.overload_method(numba.types.misc.ClassInstanceType, 'reversed')
+def ol_molecule_reversed(inst,):
+    if inst is Molecule.class_type.instance_type:
+        def impl(inst,):
+            return Molecule(inst.points[::-1])
+        return impl
+
+@numba.njit()
 def arccos(angle):
-    if np.isclose(angle, 1.0) and angle > 1.0:
+    if angle > 1.0:
         angle = 1.0
-    if np.isclose(angle, -1.0) and angle < 1.0:
+    if angle < -1.0:
         angle = -1.0
 
     try:
@@ -84,7 +109,8 @@ def arccos(angle):
         return 0.
 
 
-def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None, baseIdx = None, ΔAngle = None, down = None):
+@numba.njit()
+def mutate(moleculesIn): #: List[Molecule]):
     dont = False
 
     stickPoints = []
@@ -96,8 +122,7 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
     oldNumberOfSticks = len(stickPoints)
 
     # sticking together stuff
-    if removeBond is None:
-        removeBond = np.random.rand() > 1 - removeBondProb
+    removeBond = np.random.rand() > 1 - removeBondProb
     if removeBond:
         if len(stickPoints) > 0:
             toDelete = stickPoints[np.random.randint(0, len(stickPoints))]
@@ -108,20 +133,18 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
             toDelete.stickToPointIdx = None
 
     # rotate
-    if moleculeIdx is None:
-        moleculeIdx = np.random.randint(0, len(moleculesIn))
-    if baseIdx is None:
-        baseIdx = np.random.randint(0, len(moleculesIn[moleculeIdx].points) - 1)
+    moleculeIdx = np.random.randint(0, len(moleculesIn))
+    baseIdx = np.random.randint(0, len(moleculesIn[moleculeIdx].points) - 1)
 
     molecules = moleculesIn
 
-    if down is None:
-        down = np.random.rand() > 0.5
-    if down: 
-        molecules = [molecule.reversed() for molecule in molecules]
+    down = np.random.rand() > 0.5
+    if down:
+        molecules = numba.typed.List()
+        for molecule in moleculesIn:
+            molecules.append(molecule.reversed())
 
-    if ΔAngle is None:
-        ΔAngle = np.random.randn() * angleSigma
+    ΔAngle = np.random.randn() * angleSigma
 
     mainMolecule = molecules[moleculeIdx]
     mainRotationOrigin = mainMolecule.points[baseIdx]
@@ -171,6 +194,7 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
                     rotatePointsAround(adaptionPoint, otherMolecule.points[0:adaptionPointIdx], adaptionΔAngle)
 
                 # correct the orientation of the otherMolecule to fit the mainMolecule
+                lowerStickIdx = int(lowerStickIdx)
                 otherOrientation = otherMolecule.points[lowerStickIdx].coords - upperStickMainPoint.coords
                 mainOrientation = lowerStickMainPoint.coords - upperStickMainPoint.coords
                 orientationΔAngle = arccos(cosAngleBetween(otherOrientation, mainOrientation))
@@ -198,7 +222,7 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
     # search for new bonds if the points get close
     for i, moleculeA in enumerate(moleculesIn):
         for j, moleculeB in enumerate(moleculesIn):
-            if moleculeA == moleculeB:
+            if i == j:
                 continue
             for k, pointA in enumerate(moleculeA.points):
                 for l, pointB in enumerate(moleculeB.points):
@@ -207,13 +231,16 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
                             newNumberOfSticks += 2
                             realNewSticks += 1
                             pointA.stickToId = pointB.id
-                            pointA.stickToPointIdx = (j, l)
+                            pointA.stickToPointIdx = np.array([j, l])
                             pointB.stickToId = pointA.id
-                            pointB.stickToPointIdx = (i, k)
+                            pointB.stickToPointIdx = np.array([i, k])
 
     # undo reversing the points to handle rotation of the lower part instea of the upper part
     if down:
-        molecules = [molecule.reversed() for molecule in molecules]
+        newMolecules = numba.typed.List()
+        for molecule in molecules:
+            newMolecules.append(molecule.reversed())
+        molecules = newMolecules
 
     # shift back everything to have the first point of the first molecule at (0, 0)
     origin = molecules[0].points[0].coords
@@ -223,12 +250,15 @@ def mutate(moleculesIn: List[Molecule], *, removeBond = None, moleculeIdx = None
 
     return dont or ((oldNumberOfSticks > newNumberOfSticks) and not removeBond), realNewSticks
 
+@numba.njit()
 def clockwiseAngleBetween(a, b) -> float:
     return np.arctan2(a[0] * b[1] - a[1] * b[0], np.dot(a, b))
 
+@numba.njit()
 def cosAngleBetween(a, b) -> float:
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
+@numba.njit()
 def findStickingIdx(mainPoints, otherIds):
     for point in mainPoints:
         try:
@@ -237,10 +267,12 @@ def findStickingIdx(mainPoints, otherIds):
             pass
     return None, None
 
+@numba.njit()
 def rotatePointsAround(origin, points, ΔAngle):
     for point in points:
         point.coords = rotateAround(origin.coords, point.coords, ΔAngle)
 
+@numba.njit()
 def rotateAround(origin, point, ΔAngle):
     offset = point - origin
     newOffset = np.zeros_like(offset, dtype=np.float64)
@@ -255,16 +287,15 @@ def H(molecules):
             if point.stickToId is not None:
                 other = molecules[point.stickToPointIdx[0]].points[point.stickToPointIdx[1]]
                 r = np.linalg.norm(point.coords - other.coords)
-                # maybe lennard jones?
                 H += β * (r**bindingPower - rCutoff**bindingPower)
 
         for moleculeB in molecules:
             if moleculeA == moleculeB:
                 continue
             for pointA in moleculeA.points:
-                for pointB in moleculeB.points: 
+                for pointB in moleculeB.points:
                     if (pointA.base + pointB.base == 0) and pointA.stickToId is None and pointB.stickToId is None:
-                        r = np.linalg.norm(pointA.coords - pointB.coords) 
+                        r = np.linalg.norm(pointA.coords - pointB.coords)
                         H += α * r
 
     return H
@@ -305,21 +336,34 @@ for i in range(numberOfScaffoldNucleotides):
 
 for i in range(numberOfStapleNucleotides):
     staple[i][0] = stapleNucleotide[i]
-    staple[i][1] = -(boxSize / 4) + baseSpacing * i + 10 +0.25
+    staple[i][1] = -(boxSize / 4) + baseSpacing * i + 10 + 0.25
     staple[i][2] = +(boxSize / 4) - 3
-
 
 def generateMolecules(*packedPositionBases):
     id = 0
-    molecules = []
+    molecules = numba.typed.List()
     for packedPositionBase in packedPositionBases:
-        points = []
+        points = numba.typed.List()
         for posBase in packedPositionBase:
-            points.append(Point(id = id, base = posBase[0], coords = posBase[1:]))
+            newPoint = Point(id = id, base = posBase[0], coords = posBase[1:])
+            points.append(newPoint)
             id += 1
         molecules.append(Molecule(points))
 
     return molecules
+
+
+def plot(self, molecules):
+    x = [point.coords[0] for point in self.points]
+    y = [point.coords[1] for point in self.points]
+    plt.plot(x, y, marker="o")
+
+    label = "sticks to"
+    for point in self.points:
+        if point.stickToId is not None:
+            other = molecules[point.stickToPointIdx[0]].points[point.stickToPointIdx[1]]
+            label = str(point.id) + "<->" + str(other.id)
+            plt.plot([point.coords[0]], [point.coords[1]], marker = "x", color = "black", label = label)
 
 if __name__ == '__main__':
     molecules = generateMolecules(scaffold, staple)
@@ -329,16 +373,16 @@ if __name__ == '__main__':
     sticks = []
     j = 0
     for i in range(10000):
-        newMolecules = copy.deepcopy(molecules) # .copy()
+        newMolecules = numba.typed.List([molecule.copy() for molecule in molecules])
         dont, realNewSticks = mutate(newMolecules)
         ΔH = H(newMolecules) - oldH
         # print(oldH, ΔH)
         r = np.random.rand()
 
         newSticks = 0
+        j += 1
         if r < np.minimum(1., np.exp(-ΔH / T)) and not dont:
-            # print("accepted", molecules)
-            j += 1
+            # print("accepted")
             molecules = newMolecules
             oldH += ΔH
             newSticks = realNewSticks
@@ -349,12 +393,12 @@ if __name__ == '__main__':
         sticks.append(newSticks)
 
         # if (j % 30 == 0):
-            # plt.clf()
-            # for molecule in molecules:
-            #     molecule.plot(molecules)
-            # plt.xlim(-boxSize/2, boxSize/2)
-            # plt.ylim(-boxSize/2, boxSize/2)
-            # plt.pause(0.0001)
+        #     plt.clf()
+        #     for molecule in molecules:
+        #         plot(molecule, molecules)
+        #     plt.xlim(-boxSize/2, boxSize/2)
+        #     plt.ylim(-boxSize/2, boxSize/2)
+        #     plt.pause(0.0001)
 
     # plt.figure()
     # plt.plot(Hs)
@@ -364,3 +408,5 @@ if __name__ == '__main__':
 print(np.sum(sticks))
 
     # bindungsrate
+
+# vary binding power
