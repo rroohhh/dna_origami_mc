@@ -1,0 +1,16 @@
+test.py
+*.aux
+*.dvi
+*.fdb
+*.fls
+*.log
+*.out
+*.xdv
+*.zip
+*.fdb_latexmk
+Figure*.png
+.vscode/
+.ipynb_checkpoints
+\#*\#
+notebook.tex
+__pycache__

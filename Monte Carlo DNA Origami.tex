@@ -1,0 +1,990 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt,a4paper]{article}
+
+    
+    \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{Monte Carlo DNA Origami}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    %\geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}1}]:} \PY{k+kn}{import} \PY{n+nn}{numba}
+        \PY{k+kn}{import} \PY{n+nn}{itertools}
+        \PY{k+kn}{import} \PY{n+nn}{sys}
+        \PY{k+kn}{import} \PY{n+nn}{copy}
+        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k}{try}\PY{p}{:}
+            \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+        \PY{k}{except}\PY{p}{:}
+            \PY{k}{pass}
+        \PY{k+kn}{from} \PY{n+nn}{typing} \PY{k+kn}{import} \PY{o}{*}
+        \PY{k+kn}{import} \PY{n+nn}{logging}
+        \PY{k+kn}{from} \PY{n+nn}{IPython}\PY{n+nn}{.}\PY{n+nn}{display} \PY{k+kn}{import} \PY{n}{HTML}
+        \PY{k+kn}{from} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{animation} \PY{k+kn}{import} \PY{n}{FuncAnimation}
+        \PY{k+kn}{from} \PY{n+nn}{matplotlib} \PY{k+kn}{import} \PY{n}{rc}
+        
+        \PY{k}{if} \PY{n}{sys}\PY{o}{.}\PY{n}{platform} \PY{o}{!=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{linux}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+            \PY{n}{rc}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{animation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ffmpeg\PYZus{}path} \PY{o}{=} 
+               \PY{l+s+sa}{r}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{C:}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{Users}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{Jonas}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{anaconda3}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{envs}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{myNumba}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{Library}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{bin}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{ffmpeg.exe}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n}{rc}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{animation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{html}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{jshtml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+    The different bases are represented as a integer, if the sum up to zero,
+they can bind to each other
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}2}]:} \PY{n}{Base} \PY{o}{=} \PY{n+nb}{int}
+        
+        \PY{k}{class} \PY{n+nc}{Bases}\PY{p}{:}
+            \PY{n}{A}\PY{p}{:} \PY{n}{Base} \PY{o}{=} \PY{l+m+mi}{1}
+            \PY{n}{G}\PY{p}{:} \PY{n}{Base} \PY{o}{=} \PY{l+m+mi}{2}
+            \PY{n}{C}\PY{p}{:} \PY{n}{Base} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{2}
+            \PY{n}{T}\PY{p}{:} \PY{n}{Base} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}
+\end{Verbatim}
+A point has a associated base, a 2d position and it can stick to another point, given by the `stickToId` and `stickToPointIdx`. Points are the building block of a bigger DNA chain.
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}3}]:} \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{experimental}\PY{o}{.}\PY{n}{jitclass}\PY{p}{(}\PY{p}{[}
+            \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{id}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{numba}\PY{o}{.}\PY{n}{int32}\PY{p}{)}\PY{p}{,} 
+            \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{stickToId}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{numba}\PY{o}{.}\PY{n}{optional}\PY{p}{(}\PY{n}{numba}\PY{o}{.}\PY{n}{int32}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+            \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{stickToPointIdx}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{numba}\PY{o}{.}\PY{n}{optional}\PY{p}{(}\PY{n}{numba}\PY{o}{.}\PY{n}{int64}\PY{p}{[}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{,} 
+            \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{base}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{numba}\PY{o}{.}\PY{n}{int32}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{coords}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{numba}\PY{o}{.}\PY{n}{float64}\PY{p}{[}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+        \PY{p}{]}\PY{p}{)}
+        \PY{k}{class} \PY{n+nc}{Point}\PY{p}{:}
+            \PY{n+nb}{id}\PY{p}{:} \PY{n+nb}{int}
+            \PY{n}{stickToId}\PY{p}{:} \PY{n+nb}{int}
+            \PY{n}{base}\PY{p}{:} \PY{n}{Base}
+            \PY{n}{coords}\PY{p}{:} \PY{n}{numba}\PY{o}{.}\PY{n}{float32}\PY{p}{[}\PY{p}{:}\PY{p}{]}
+        
+            \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}repr\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+                \PY{k}{return} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{(Point id=}\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{id}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, stickToId=}\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{stickToId}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{,}\PY{l+s+s2}{\PYZdq{}} \PYZbs{}
+                    \PY{o}{+} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ base=}\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{base}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, coords=}\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{coords}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}
+        
+            \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n+nb}{id}\PY{p}{,} \PY{n}{coords}\PY{p}{,} \PY{n}{base}\PY{p}{)}\PY{p}{:}
+                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{id} \PY{o}{=} \PY{n+nb}{id}
+                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{stickToId} \PY{o}{=} \PY{k+kc}{None}
+                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o}{=} \PY{k+kc}{None}
+                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{base} \PY{o}{=} \PY{n}{base}
+                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{coords} \PY{o}{=} \PY{n}{coords}
+\end{Verbatim}
+
+    A molecule represents a chain of points or a DNA chain.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}4}]:} \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{experimental}\PY{o}{.}\PY{n}{jitclass}\PY{p}{(}\PY{p}{[}
+            \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{points}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{numba}\PY{o}{.}\PY{n}{types}\PY{o}{.}\PY{n}{ListType}\PY{p}{(}\PY{n}{Point}\PY{o}{.}\PY{n}{class\PYZus{}type}\PY{o}{.}\PY{n}{instance\PYZus{}type}\PY{p}{)}\PY{p}{)}
+        \PY{p}{]}\PY{p}{)}
+        \PY{k}{class} \PY{n+nc}{Molecule}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} first id from ourselves, second id from other molecule}
+            \PY{n}{points}\PY{p}{:} \PY{n}{List}\PY{p}{[}\PY{n}{Point}\PY{p}{]}
+        
+            \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{points}\PY{p}{)}\PY{p}{:}
+                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{points} \PY{o}{=} \PY{n}{points}
+        
+            \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}repr\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+                \PY{k}{return} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{(Molecule }\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{points}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}
+        
+            \PY{k}{def} \PY{n+nf}{ids}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)} \PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}} \PY{p}{[}\PY{n+nb}{int}\PY{p}{]}\PY{p}{:}
+                \PY{k}{return} \PY{p}{[}\PY{n}{point}\PY{o}{.}\PY{n}{id} \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{points}\PY{p}{]}
+        
+            \PY{k}{def} \PY{n+nf}{copy}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+                \PY{n}{newPoints} \PY{o}{=} \PY{n}{numba}\PY{o}{.}\PY{n}{typed}\PY{o}{.}\PY{n}{List}\PY{p}{(}\PY{p}{)}
+                \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{points}\PY{p}{:}
+                    \PY{n}{p} \PY{o}{=} \PY{n}{Point}\PY{p}{(}\PY{n}{point}\PY{o}{.}\PY{n}{id}\PY{p}{,} \PY{n}{point}\PY{o}{.}\PY{n}{coords}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{point}\PY{o}{.}\PY{n}{base}\PY{p}{)}
+                    \PY{n}{p}\PY{o}{.}\PY{n}{stickToId} \PY{o}{=} \PY{n}{point}\PY{o}{.}\PY{n}{stickToId}
+        
+                    \PY{k}{if} \PY{n}{point}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o+ow}{is} \PY{o+ow}{not} \PY{k+kc}{None}\PY{p}{:}
+                        \PY{n}{p}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o}{=} \PY{n}{point}\PY{o}{.}\PY{n}{stickToPointIdx}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+        
+                    \PY{n}{newPoints}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{p}\PY{p}{)}
+                \PY{k}{return} \PY{n}{Molecule}\PY{p}{(}\PY{n}{newPoints}\PY{p}{)}
+                        
+        \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{extending}\PY{o}{.}\PY{n}{overload\PYZus{}method}\PY{p}{(}\PY{n}{numba}\PY{o}{.}\PY{n}{types}\PY{o}{.}\PY{n}{misc}\PY{o}{.}\PY{n}{ClassInstanceType}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{reversed}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{ol\PYZus{}molecule\PYZus{}reversed}\PY{p}{(}\PY{n}{inst}\PY{p}{,}\PY{p}{)}\PY{p}{:}
+            \PY{k}{if} \PY{n}{inst} \PY{o+ow}{is} \PY{n}{Molecule}\PY{o}{.}\PY{n}{class\PYZus{}type}\PY{o}{.}\PY{n}{instance\PYZus{}type}\PY{p}{:}
+                \PY{k}{def} \PY{n+nf}{impl}\PY{p}{(}\PY{n}{inst}\PY{p}{,}\PY{p}{)}\PY{p}{:}
+                    \PY{k}{return} \PY{n}{Molecule}\PY{p}{(}\PY{n}{inst}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{p}{:}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+                \PY{k}{return} \PY{n}{impl}
+\end{Verbatim}
+
+    The next cell contains the implementation of \texttt{mutate}, the
+function that mutates the existing state, for which then the energy is
+calculated and it gets decided if the new state should be accepted or
+rejected.
+
+The general idea of \texttt{mutate} is to select a random point among
+the molecule (dna chains), select a direction (up or down) and then
+rotate the points that come after / before the selected point in the
+chain by a small angle around the selected point.
+
+If points from different molecules come very close, they can stick
+together. If a single point in the chain that was initially selected
+sticks to another point, the complete chain that belongs to that point
+gets rotated aswell. If there are two points, one above and one below
+the selected point in the chain that stick to other points of the same
+(but different from the original) chain, the chain the other points
+belong to get stretched, such that the two pairs of points, that stick
+together, are again close. In cases where this is not possible the
+mutation gets rejected.
+
+Furthermore there is a random chance for any of the bonded pairs to
+break.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}5}]:} \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{arccos}\PY{p}{(}\PY{n}{angle}\PY{p}{)}\PY{p}{:}
+            \PY{k}{if} \PY{n}{angle} \PY{o}{\PYZgt{}} \PY{l+m+mf}{1.0}\PY{p}{:}
+                \PY{n}{angle} \PY{o}{=} \PY{l+m+mf}{1.0}
+            \PY{k}{if} \PY{n}{angle} \PY{o}{\PYZlt{}} \PY{o}{\PYZhy{}}\PY{l+m+mf}{1.0}\PY{p}{:}
+                \PY{n}{angle} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mf}{1.0}
+        
+            \PY{k}{try}\PY{p}{:}
+                \PY{n}{a} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{arccos}\PY{p}{(}\PY{n}{angle}\PY{p}{)}
+                \PY{k}{return} \PY{n}{a}
+            \PY{k}{except}\PY{p}{:}
+                \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bad angle}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{angle}\PY{p}{)}
+                \PY{k}{return} \PY{l+m+mf}{0.}
+        
+        
+        \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{mutate}\PY{p}{(}\PY{n}{moleculesIn}\PY{p}{,} \PY{n}{removeBondProb}\PY{p}{,} \PY{n}{rCutoff}\PY{p}{,} \PY{n}{angleSigma}\PY{p}{)}\PY{p}{:}
+            \PY{n}{dont} \PY{o}{=} \PY{k+kc}{False}
+        
+            \PY{c+c1}{\PYZsh{} search for all bonds}
+            \PY{n}{stickPoints} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{molecule} \PY{o+ow}{in} \PY{n}{moleculesIn}\PY{p}{:}
+                \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n}{molecule}\PY{o}{.}\PY{n}{points}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{point}\PY{o}{.}\PY{n}{stickToId} \PY{o+ow}{is} \PY{o+ow}{not} \PY{k+kc}{None}\PY{p}{:}
+                        \PY{n}{stickPoints}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{point}\PY{p}{)}
+        
+            \PY{n}{oldNumberOfSticks} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{stickPoints}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} sticking together stuff}
+            \PY{n}{removeBond} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{removeBondProb}
+            \PY{k}{if} \PY{n}{removeBond}\PY{p}{:}
+                \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{stickPoints}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0}\PY{p}{:}
+                    \PY{n}{toDelete} \PY{o}{=} \PY{n}{stickPoints}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{stickPoints}\PY{p}{)}\PY{p}{)}\PY{p}{]}
+                    \PY{n}{otherIdx} \PY{o}{=} \PY{n}{toDelete}\PY{o}{.}\PY{n}{stickToPointIdx}
+                    \PY{n}{other} \PY{o}{=} \PY{n}{moleculesIn}\PY{p}{[}\PY{n}{otherIdx}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{otherIdx}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
+                    \PY{n}{other}\PY{o}{.}\PY{n}{stickToId} \PY{o}{=} \PY{k+kc}{None}
+                    \PY{n}{other}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o}{=} \PY{k+kc}{None}
+                    \PY{n}{toDelete}\PY{o}{.}\PY{n}{stickToId} \PY{o}{=} \PY{k+kc}{None}
+                    \PY{n}{toDelete}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o}{=} \PY{k+kc}{None}
+        
+            \PY{c+c1}{\PYZsh{} find rotation point}
+            \PY{n}{moleculeIdx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{moleculesIn}\PY{p}{)}\PY{p}{)}
+            \PY{n}{baseIdx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{moleculesIn}\PY{p}{[}\PY{n}{moleculeIdx}\PY{p}{]}\PY{o}{.}\PY{n}{points}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}
+        
+            \PY{n}{molecules} \PY{o}{=} \PY{n}{moleculesIn}
+        
+            \PY{n}{down} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mf}{0.5}
+            \PY{k}{if} \PY{n}{down}\PY{p}{:}
+                \PY{n}{molecules} \PY{o}{=} \PY{n}{numba}\PY{o}{.}\PY{n}{typed}\PY{o}{.}\PY{n}{List}\PY{p}{(}\PY{p}{)}
+                \PY{k}{for} \PY{n}{molecule} \PY{o+ow}{in} \PY{n}{moleculesIn}\PY{p}{:}
+                    \PY{n}{molecules}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{molecule}\PY{o}{.}\PY{n}{reversed}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        
+            \PY{n}{ΔAngle} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randn}\PY{p}{(}\PY{p}{)} \PY{o}{*} \PY{n}{angleSigma}
+        
+            \PY{n}{mainMolecule} \PY{o}{=} \PY{n}{molecules}\PY{p}{[}\PY{n}{moleculeIdx}\PY{p}{]}
+            \PY{n}{mainRotationOrigin} \PY{o}{=} \PY{n}{mainMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{baseIdx}\PY{p}{]}
+            \PY{n}{otherMolecules} \PY{o}{=} \PY{p}{[}\PY{n}{molecule} \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{molecule} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{molecules}\PY{p}{)} 
+                              \PY{k}{if} \PY{n}{i} \PY{o}{!=} \PY{n}{moleculeIdx}\PY{p}{]}
+        
+            \PY{c+c1}{\PYZsh{} Rotade main molecule}
+            \PY{n}{rotatePointsAround}\PY{p}{(}\PY{n}{mainRotationOrigin}\PY{p}{,} \PY{n}{mainMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{baseIdx} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{,} \PY{n}{ΔAngle}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} Rotated the other molecules that stick to the main one}
+            \PY{k}{for} \PY{n}{otherMolecule} \PY{o+ow}{in} \PY{n}{otherMolecules}\PY{p}{:}
+                \PY{n}{lowerStickMainPoint}\PY{p}{,} \PY{n}{lowerStickIdx} \PY{o}{=} \PYZbs{}
+                    \PY{n}{findStickingIdx}\PY{p}{(}\PY{n}{mainMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{:}\PY{n}{baseIdx}\PY{p}{]}\PY{p}{[}\PY{p}{:}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{otherMolecule}\PY{o}{.}\PY{n}{ids}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+                \PY{n}{upperStickMainPoint}\PY{p}{,} \PY{n}{upperStickIdx} \PY{o}{=} \PYZbs{}
+                    \PY{n}{findStickingIdx}\PY{p}{(}\PY{n}{mainMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{baseIdx}\PY{p}{:}\PY{p}{]}\PY{p}{,} \PY{n}{otherMolecule}\PY{o}{.}\PY{n}{ids}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        
+                \PY{k}{if} \PY{n}{upperStickIdx} \PY{o+ow}{is} \PY{k+kc}{None}\PY{p}{:}
+                    \PY{k}{continue}
+                \PY{k}{else}\PY{p}{:}
+                    \PY{n}{rotatePointsAround}\PY{p}{(}\PY{n}{mainRotationOrigin}\PY{p}{,} \PY{n}{otherMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{,} \PY{n}{ΔAngle}\PY{p}{)}
+        
+                    \PY{k}{if} \PY{n}{lowerStickIdx} \PY{o+ow}{is} \PY{o+ow}{not} \PY{k+kc}{None}\PY{p}{:}
+                        \PY{n}{low} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{n}{lowerStickIdx}\PY{p}{,} \PY{n}{upperStickIdx}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{1}
+                        \PY{n}{high} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{n}{lowerStickIdx}\PY{p}{,} \PY{n}{upperStickIdx}\PY{p}{)}
+        
+                        \PY{k}{if} \PY{n}{low} \PY{o}{\PYZlt{}} \PY{n}{high}\PY{p}{:}
+                            \PY{c+c1}{\PYZsh{} calculate distance between both sticking points}
+                            \PY{n}{c} \PY{o}{=} \PY{n}{lowerStickMainPoint}\PY{o}{.}\PY{n}{coords} \PY{o}{\PYZhy{}} \PY{n}{upperStickMainPoint}\PY{o}{.}\PY{n}{coords}
+                            \PY{n}{newDistance} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{c}\PY{p}{)}
+        
+                            \PY{c+c1}{\PYZsh{} select random point in between}
+                            \PY{n}{adaptionPointIdx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}
+                                \PY{n+nb}{min}\PY{p}{(}\PY{n}{lowerStickIdx}\PY{p}{,} \PY{n}{upperStickIdx}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,}
+                                \PY{n+nb}{max}\PY{p}{(}\PY{n}{lowerStickIdx}\PY{p}{,} \PY{n}{upperStickIdx}\PY{p}{)}
+                            \PY{p}{)}
+                            \PY{n}{adaptionPoint} \PY{o}{=} \PY{n}{otherMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{adaptionPointIdx}\PY{p}{]}
+                            \PY{n}{a} \PY{o}{=} \PY{n}{adaptionPoint}\PY{o}{.}\PY{n}{coords} \PY{o}{\PYZhy{}} \PY{n}{upperStickMainPoint}\PY{o}{.}\PY{n}{coords}
+                            \PY{n}{lowerStickOtherIdx} \PY{o}{=} \PY{n}{lowerStickMainPoint}\PY{o}{.}\PY{n}{stickToPointIdx}
+                            \PY{n}{b} \PY{o}{=} \PY{n}{adaptionPoint}\PY{o}{.}\PY{n}{coords} \PY{o}{\PYZhy{}} \PYZbs{}
+                                \PY{n}{moleculesIn}\PY{p}{[}\PY{n}{lowerStickOtherIdx}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]} \PYZbs{}
+                                \PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{lowerStickOtherIdx}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{coords}
+                            \PY{n}{maximumDistance} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{a}\PY{p}{)} \PY{o}{+} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{b}\PY{p}{)}
+                            \PY{k}{if} \PY{n}{maximumDistance} \PY{o}{\PYZlt{}} \PY{n}{newDistance}\PY{p}{:}
+                                \PY{n}{newDistance} \PY{o}{=} \PY{n}{maximumDistance}
+                                \PY{n}{dont} \PY{o}{=} \PY{k+kc}{True}
+        
+                            \PY{c+c1}{\PYZsh{} figure out the angle to stretch the otherMolecule }
+                            \PY{c+c1}{\PYZsh{} between the two sticking points to the new distance}
+                            \PY{n}{newcosβ} \PY{o}{=} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{o}{+} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{b}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} 
+                                       \PY{o}{\PYZhy{}} \PY{n}{newDistance}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)} \PYZbs{}
+                                \PY{o}{/} \PY{p}{(}\PY{l+m+mi}{2} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{a}\PY{p}{)} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{b}\PY{p}{)}\PY{p}{)}
+                            \PY{n}{newβ} \PY{o}{=} \PY{n}{arccos}\PY{p}{(}\PY{n}{newcosβ}\PY{p}{)}
+                            \PY{n}{oldβ} \PY{o}{=} \PY{n}{arccos}\PY{p}{(}\PY{n}{cosAngleBetween}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)}\PY{p}{)}
+                            \PY{n}{adaptionΔAngle} \PY{o}{=} \PY{n}{newβ} \PY{o}{\PYZhy{}} \PY{n}{oldβ}
+        
+                            \PY{n}{clockwiseOldβ} \PY{o}{=} \PY{n}{clockwiseAngleBetween}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)}
+                            \PY{n}{adaptionΔAngle} \PY{o}{*}\PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sign}\PY{p}{(}\PY{n}{clockwiseOldβ}\PY{p}{)}
+        
+                            \PY{n}{rotatePointsAround}\PY{p}{(}\PY{n}{adaptionPoint}\PY{p}{,} 
+                                               \PY{n}{otherMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{:}\PY{n}{adaptionPointIdx}\PY{p}{]}\PY{p}{,} 
+                                               \PY{n}{adaptionΔAngle}\PY{p}{)}
+        
+                        \PY{c+c1}{\PYZsh{} correct the orientation of the otherMolecule to fit the mainMolecule}
+                        \PY{n}{lowerStickIdx} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{lowerStickIdx}\PY{p}{)}
+                        \PY{n}{otherOrientation} \PY{o}{=} \PY{n}{otherMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{lowerStickIdx}\PY{p}{]}\PY{o}{.}\PY{n}{coords} \PYZbs{}
+                            \PY{o}{\PYZhy{}} \PY{n}{upperStickMainPoint}\PY{o}{.}\PY{n}{coords}
+                        \PY{n}{mainOrientation} \PY{o}{=} \PY{n}{lowerStickMainPoint}\PY{o}{.}\PY{n}{coords} \PYZbs{}
+                            \PY{o}{\PYZhy{}} \PY{n}{upperStickMainPoint}\PY{o}{.}\PY{n}{coords}
+                        \PY{n}{orientationΔAngle} \PY{o}{=} \PY{n}{arccos}\PY{p}{(}
+                            \PY{n}{cosAngleBetween}\PY{p}{(}\PY{n}{otherOrientation}\PY{p}{,} \PY{n}{mainOrientation}\PY{p}{)}\PY{p}{)}
+                        \PY{n}{clockwiseOrientationΔAngle} \PY{o}{=} \PYZbs{}
+                            \PY{n}{clockwiseAngleBetween}\PY{p}{(}\PY{n}{otherOrientation}\PY{p}{,} \PY{n}{mainOrientation}\PY{p}{)}
+                        
+                        \PY{n}{upperStickOtherIdx} \PY{o}{=} \PY{n}{upperStickMainPoint}\PY{o}{.}\PY{n}{stickToPointIdx}
+                        \PY{n}{upperStickOtherPoint} \PY{o}{=} \PYZbs{}
+                            \PY{n}{moleculesIn}\PY{p}{[}\PY{n}{upperStickOtherIdx}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{upperStickOtherIdx}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
+                        \PY{n}{rotatePointsAround}\PY{p}{(}\PY{n}{upperStickOtherPoint}\PY{p}{,} 
+                                           \PY{n}{otherMolecule}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{:}\PY{n}{upperStickIdx}\PY{p}{]}\PY{p}{,} 
+                                           \PY{n}{orientationΔAngle} \PY{o}{*} \PYZbs{}
+                                           \PY{n}{np}\PY{o}{.}\PY{n}{sign}\PY{p}{(}\PY{n}{clockwiseOrientationΔAngle}\PY{p}{)}\PY{p}{)}
+        
+        
+            \PY{n}{newNumberOfSticks} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{c+c1}{\PYZsh{} find the old bonds that got broken due to being moved too far away}
+            \PY{k}{for} \PY{n}{molecule} \PY{o+ow}{in} \PY{n}{molecules}\PY{p}{:}
+                \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n}{molecule}\PY{o}{.}\PY{n}{points}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{point}\PY{o}{.}\PY{n}{stickToId} \PY{o+ow}{is} \PY{o+ow}{not} \PY{k+kc}{None}\PY{p}{:}
+                        \PY{n}{otherIdx} \PY{o}{=} \PY{n}{point}\PY{o}{.}\PY{n}{stickToPointIdx}
+                        \PY{n}{other} \PY{o}{=} \PY{n}{moleculesIn}\PY{p}{[}\PY{n}{otherIdx}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{otherIdx}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
+                        \PY{k}{if} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{point}\PY{o}{.}\PY{n}{coords} \PY{o}{\PYZhy{}} \PY{n}{other}\PY{o}{.}\PY{n}{coords}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{n}{rCutoff}\PY{p}{:}
+                            \PY{n}{other}\PY{o}{.}\PY{n}{stickToId} \PY{o}{=} \PY{k+kc}{None}
+                            \PY{n}{other}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o}{=} \PY{k+kc}{None}
+                            \PY{n}{point}\PY{o}{.}\PY{n}{stickToId} \PY{o}{=} \PY{k+kc}{None}
+                            \PY{n}{point}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o}{=} \PY{k+kc}{None}
+                        \PY{k}{else}\PY{p}{:}
+                            \PY{n}{newNumberOfSticks} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+        
+            \PY{n}{realNewSticks} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{c+c1}{\PYZsh{} search for new bonds if the points get close}
+            \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{moleculeA} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{moleculesIn}\PY{p}{)}\PY{p}{:}
+                \PY{k}{for} \PY{n}{j}\PY{p}{,} \PY{n}{moleculeB} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{moleculesIn}\PY{p}{)}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{i} \PY{o}{==} \PY{n}{j}\PY{p}{:}
+                        \PY{k}{continue}
+                    \PY{k}{for} \PY{n}{k}\PY{p}{,} \PY{n}{pointA} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{moleculeA}\PY{o}{.}\PY{n}{points}\PY{p}{)}\PY{p}{:}
+                        \PY{k}{for} \PY{n}{l}\PY{p}{,} \PY{n}{pointB} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{moleculeB}\PY{o}{.}\PY{n}{points}\PY{p}{)}\PY{p}{:}
+                            \PY{k}{if} \PY{p}{(}\PY{n}{pointA}\PY{o}{.}\PY{n}{base} \PY{o}{+} \PY{n}{pointB}\PY{o}{.}\PY{n}{base} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{)} \PYZbs{}
+                                \PY{o+ow}{and} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{pointA}\PY{o}{.}\PY{n}{coords} \PY{o}{\PYZhy{}} \PY{n}{pointB}\PY{o}{.}\PY{n}{coords}\PY{p}{)} \PY{o}{\PYZlt{}} \PY{n}{rCutoff}\PY{p}{)}\PY{p}{:}
+                                \PY{k}{if} \PY{n}{pointA}\PY{o}{.}\PY{n}{stickToId} \PY{o+ow}{is} \PY{k+kc}{None} \PY{o+ow}{and} \PY{n}{pointB}\PY{o}{.}\PY{n}{stickToId} \PY{o+ow}{is} \PY{k+kc}{None}\PY{p}{:}
+                                    \PY{n}{newNumberOfSticks} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{2}
+                                    \PY{n}{realNewSticks} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+                                    \PY{n}{pointA}\PY{o}{.}\PY{n}{stickToId} \PY{o}{=} \PY{n}{pointB}\PY{o}{.}\PY{n}{id}
+                                    \PY{n}{pointA}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{n}{j}\PY{p}{,} \PY{n}{l}\PY{p}{]}\PY{p}{)}
+                                    \PY{n}{pointB}\PY{o}{.}\PY{n}{stickToId} \PY{o}{=} \PY{n}{pointA}\PY{o}{.}\PY{n}{id}
+                                    \PY{n}{pointB}\PY{o}{.}\PY{n}{stickToPointIdx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{n}{i}\PY{p}{,} \PY{n}{k}\PY{p}{]}\PY{p}{)}
+        
+            \PY{c+c1}{\PYZsh{} undo reversing the points to handle rotation }
+            \PY{c+c1}{\PYZsh{} of the lower part instea of the upper part}
+            \PY{k}{if} \PY{n}{down}\PY{p}{:}
+                \PY{n}{newMolecules} \PY{o}{=} \PY{n}{numba}\PY{o}{.}\PY{n}{typed}\PY{o}{.}\PY{n}{List}\PY{p}{(}\PY{p}{)}
+                \PY{k}{for} \PY{n}{molecule} \PY{o+ow}{in} \PY{n}{molecules}\PY{p}{:}
+                    \PY{n}{newMolecules}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{molecule}\PY{o}{.}\PY{n}{reversed}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+                \PY{n}{molecules} \PY{o}{=} \PY{n}{newMolecules}
+        
+            \PY{c+c1}{\PYZsh{} shift back everything to have the first point of the first molecule at (0, 0)}
+            \PY{n}{origin} \PY{o}{=} \PY{n}{molecules}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{coords}
+            \PY{k}{for} \PY{n}{molecule} \PY{o+ow}{in} \PY{n}{molecules}\PY{p}{:}
+                \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n}{molecule}\PY{o}{.}\PY{n}{points}\PY{p}{:}
+                    \PY{n}{point}\PY{o}{.}\PY{n}{coords} \PY{o}{=} \PY{n}{point}\PY{o}{.}\PY{n}{coords} \PY{o}{\PYZhy{}} \PY{n}{origin}
+        
+            \PY{n}{dont} \PY{o}{=} \PY{n}{dont} \PY{o+ow}{or} \PY{p}{(}\PY{p}{(}\PY{n}{oldNumberOfSticks} \PY{o}{\PYZgt{}} \PY{n}{newNumberOfSticks}\PY{p}{)} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{removeBond}\PY{p}{)}
+            \PY{k}{return} \PY{n}{dont}\PY{p}{,} \PY{n}{realNewSticks}
+        
+        \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{clockwiseAngleBetween}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)} \PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}} \PY{n+nb}{float}\PY{p}{:}
+            \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{arctan2}\PY{p}{(}\PY{n}{a}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{*} \PY{n}{b}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{a}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{*} \PY{n}{b}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)}\PY{p}{)}
+        
+        \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{cosAngleBetween}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)} \PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}} \PY{n+nb}{float}\PY{p}{:}
+            \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)} \PY{o}{/} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{a}\PY{p}{)} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{b}\PY{p}{)}\PY{p}{)}
+        
+        \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{findStickingIdx}\PY{p}{(}\PY{n}{mainPoints}\PY{p}{,} \PY{n}{otherIds}\PY{p}{)}\PY{p}{:}
+            \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n}{mainPoints}\PY{p}{:}
+                \PY{k}{try}\PY{p}{:}
+                    \PY{k}{return} \PY{n}{point}\PY{p}{,} \PY{n}{otherIds}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{n}{point}\PY{o}{.}\PY{n}{stickToId}\PY{p}{)}
+                \PY{k}{except}\PY{p}{:}
+                    \PY{k}{pass}
+            \PY{k}{return} \PY{k+kc}{None}\PY{p}{,} \PY{k+kc}{None}
+        
+        \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{rotatePointsAround}\PY{p}{(}\PY{n}{origin}\PY{p}{,} \PY{n}{points}\PY{p}{,} \PY{n}{ΔAngle}\PY{p}{)}\PY{p}{:}
+            \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n}{points}\PY{p}{:}
+                \PY{n}{point}\PY{o}{.}\PY{n}{coords} \PY{o}{=} \PY{n}{rotateAround}\PY{p}{(}\PY{n}{origin}\PY{o}{.}\PY{n}{coords}\PY{p}{,} \PY{n}{point}\PY{o}{.}\PY{n}{coords}\PY{p}{,} \PY{n}{ΔAngle}\PY{p}{)}
+        
+        \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{rotateAround}\PY{p}{(}\PY{n}{origin}\PY{p}{,} \PY{n}{point}\PY{p}{,} \PY{n}{ΔAngle}\PY{p}{)}\PY{p}{:}
+            \PY{n}{offset} \PY{o}{=} \PY{n}{point} \PY{o}{\PYZhy{}} \PY{n}{origin}
+            \PY{n}{newOffset} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros\PYZus{}like}\PY{p}{(}\PY{n}{offset}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{float64}\PY{p}{)}
+            \PY{n}{newOffset}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=}  \PY{n}{np}\PY{o}{.}\PY{n}{cos}\PY{p}{(}\PY{n}{ΔAngle}\PY{p}{)} \PY{o}{*} \PY{n}{offset}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{np}\PY{o}{.}\PY{n}{sin}\PY{p}{(}\PY{n}{ΔAngle}\PY{p}{)} \PY{o}{*} \PY{n}{offset}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+            \PY{n}{newOffset}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=}  \PY{n}{np}\PY{o}{.}\PY{n}{sin}\PY{p}{(}\PY{n}{ΔAngle}\PY{p}{)} \PY{o}{*} \PY{n}{offset}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{+} \PY{n}{np}\PY{o}{.}\PY{n}{cos}\PY{p}{(}\PY{n}{ΔAngle}\PY{p}{)} \PY{o}{*} \PY{n}{offset}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+            \PY{k}{return} \PY{n}{origin} \PY{o}{+} \PY{n}{newOffset}
+\end{Verbatim}
+
+    The energy is made up of two parts, a globally acting force proportional
+to the distance of points that do not belong to the same chain, which
+simply exists to pull the molecules together.
+
+The second part is a kind of binding energy, that only acts locally
+between points that have matching bases (the sum of the base code equals
+zero). This force has a strict cutoff and the slope is parametrized.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}6}]:} \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{H}\PY{p}{(}\PY{n}{molecules}\PY{p}{,} \PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{p}{,} \PY{n}{bindingPower}\PY{p}{,} \PY{n}{rCutoff}\PY{p}{,} \PY{n}{rCutoffLocalForce}\PY{p}{)}\PY{p}{:}
+            \PY{n}{H} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{moleculeA} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{molecules}\PY{p}{)}\PY{p}{:}
+                \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n}{moleculeA}\PY{o}{.}\PY{n}{points}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{point}\PY{o}{.}\PY{n}{stickToId} \PY{o+ow}{is} \PY{o+ow}{not} \PY{k+kc}{None}\PY{p}{:}
+                        \PY{n}{otherIdx} \PY{o}{=} \PY{n}{point}\PY{o}{.}\PY{n}{stickToPointIdx}
+                        \PY{n}{other} \PY{o}{=} \PY{n}{molecules}\PY{p}{[}\PY{n}{otherIdx}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{otherIdx}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
+                        \PY{n}{r} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{point}\PY{o}{.}\PY{n}{coords} \PY{o}{\PYZhy{}} \PY{n}{other}\PY{o}{.}\PY{n}{coords}\PY{p}{)}
+                        \PY{n}{H} \PY{o}{+}\PY{o}{=} \PY{n}{β} \PY{o}{*} \PY{p}{(}\PY{n}{r}\PY{o}{*}\PY{o}{*}\PY{n}{bindingPower} \PY{o}{\PYZhy{}} \PY{n}{rCutoff}\PY{o}{*}\PY{o}{*}\PY{n}{bindingPower}\PY{p}{)}
+        
+                \PY{k}{for} \PY{n}{j}\PY{p}{,} \PY{n}{moleculeB} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{molecules}\PY{p}{)}\PY{p}{:}
+                    \PY{k}{if} \PY{n}{i} \PY{o}{==} \PY{n}{j}\PY{p}{:}
+                        \PY{k}{continue}
+                    \PY{k}{for} \PY{n}{pointA} \PY{o+ow}{in} \PY{n}{moleculeA}\PY{o}{.}\PY{n}{points}\PY{p}{:}
+                        \PY{k}{for} \PY{n}{pointB} \PY{o+ow}{in} \PY{n}{moleculeB}\PY{o}{.}\PY{n}{points}\PY{p}{:}
+                            \PY{k}{if} \PY{p}{(}\PY{n}{pointA}\PY{o}{.}\PY{n}{base} \PY{o}{+} \PY{n}{pointB}\PY{o}{.}\PY{n}{base} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{)} \PYZbs{}
+                                \PY{o+ow}{and} \PY{n}{pointA}\PY{o}{.}\PY{n}{stickToId} \PY{o+ow}{is} \PY{k+kc}{None} \PYZbs{}
+                                \PY{o+ow}{and} \PY{n}{pointB}\PY{o}{.}\PY{n}{stickToId} \PY{o+ow}{is} \PY{k+kc}{None}\PY{p}{:}
+                                \PY{n}{r} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{pointA}\PY{o}{.}\PY{n}{coords} \PY{o}{\PYZhy{}} \PY{n}{pointB}\PY{o}{.}\PY{n}{coords}\PY{p}{)}
+                                \PY{n}{H} \PY{o}{+}\PY{o}{=} \PY{n}{α} \PY{o}{*} \PY{n}{r}
+        
+            \PY{k}{return} \PY{n}{H}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}7}]:} \PY{k}{def} \PY{n+nf}{plot}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{molecules}\PY{p}{)}\PY{p}{:}
+            \PY{n}{x} \PY{o}{=} \PY{p}{[}\PY{n}{point}\PY{o}{.}\PY{n}{coords}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{points}\PY{p}{]}
+            \PY{n}{y} \PY{o}{=} \PY{p}{[}\PY{n}{point}\PY{o}{.}\PY{n}{coords}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{points}\PY{p}{]}
+            \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{o}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        
+            \PY{n}{label} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sticks to}\PY{l+s+s2}{\PYZdq{}}
+            \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{points}\PY{p}{:}
+                \PY{k}{if} \PY{n}{point}\PY{o}{.}\PY{n}{stickToId} \PY{o+ow}{is} \PY{o+ow}{not} \PY{k+kc}{None}\PY{p}{:}
+                    \PY{n}{otherIdx} \PY{o}{=} \PY{n}{point}\PY{o}{.}\PY{n}{stickToPointIdx}
+                    \PY{n}{other} \PY{o}{=} \PY{n}{molecules}\PY{p}{[}\PY{n}{otherIdx}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{points}\PY{p}{[}\PY{n}{otherIdx}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
+                    \PY{n}{label} \PY{o}{=} \PY{n+nb}{str}\PY{p}{(}\PY{n}{point}\PY{o}{.}\PY{n}{id}\PY{p}{)} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZlt{}\PYZhy{}\PYZgt{}}\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n}{other}\PY{o}{.}\PY{n}{id}\PY{p}{)}
+                    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{n}{point}\PY{o}{.}\PY{n}{coords}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{p}{,} 
+                             \PY{p}{[}\PY{n}{point}\PY{o}{.}\PY{n}{coords}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{p}{,} 
+                             \PY{n}{marker} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{color} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{black}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{label} \PY{o}{=} \PY{n}{label}\PY{p}{)}
+        
+        \PY{k}{def} \PY{n+nf}{generateMolecules}\PY{p}{(}\PY{o}{*}\PY{n}{packedPositionBases}\PY{p}{)}\PY{p}{:}
+            \PY{n+nb}{id} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{n}{molecules} \PY{o}{=} \PY{n}{numba}\PY{o}{.}\PY{n}{typed}\PY{o}{.}\PY{n}{List}\PY{p}{(}\PY{p}{)}
+            \PY{k}{for} \PY{n}{packedPositionBase} \PY{o+ow}{in} \PY{n}{packedPositionBases}\PY{p}{:}
+                \PY{n}{points} \PY{o}{=} \PY{n}{numba}\PY{o}{.}\PY{n}{typed}\PY{o}{.}\PY{n}{List}\PY{p}{(}\PY{p}{)}
+                \PY{k}{for} \PY{n}{posBase} \PY{o+ow}{in} \PY{n}{packedPositionBase}\PY{p}{:}
+                    \PY{n}{newPoint} \PY{o}{=} \PY{n}{Point}\PY{p}{(}\PY{n+nb}{id} \PY{o}{=} \PY{n+nb}{id}\PY{p}{,} \PY{n}{base} \PY{o}{=} \PY{n}{posBase}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{coords} \PY{o}{=} \PY{n}{posBase}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{)}
+                    \PY{n}{points}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{newPoint}\PY{p}{)}
+                    \PY{n+nb}{id} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+                \PY{n}{molecules}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{Molecule}\PY{p}{(}\PY{n}{points}\PY{p}{)}\PY{p}{)}
+        
+            \PY{k}{return} \PY{n}{molecules}
+\end{Verbatim}
+
+    Finally the main loop simply mutates the existing state, calculates the
+new energy and accepts the new state if the energy is lower, of with a
+random chance if the energy is higher.
+
+(There are two versions, because we can not return the inbetween steps
+from the numba version)
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}8}]:} \PY{n+nd}{@numba}\PY{o}{.}\PY{n}{njit}\PY{p}{(}\PY{p}{)}
+        \PY{k}{def} \PY{n+nf}{run}\PY{p}{(}\PY{n}{molecules}\PY{p}{,} \PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{p}{,} \PY{n}{rCutoff}\PY{p}{,} \PY{n}{rCutoffLocalForce}\PY{p}{,} 
+                \PY{n}{bindingPower}\PY{p}{,} \PY{n}{angleSigma}\PY{p}{,} \PY{n}{removeBondProb}\PY{p}{,} \PY{n}{T}\PY{p}{,} \PY{n}{N}\PY{p}{)}\PY{p}{:}
+            \PY{n}{oldH} \PY{o}{=} \PY{n}{H}\PY{p}{(}\PY{n}{molecules}\PY{p}{,} \PY{n}{α}\PY{o}{=}\PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{o}{=}\PY{n}{β}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,} 
+                     \PY{n}{rCutoffLocalForce}\PY{o}{=}\PY{n}{rCutoffLocalForce}\PY{p}{,} \PY{n}{bindingPower}\PY{o}{=}\PY{n}{bindingPower}\PY{p}{)}
+            \PY{n}{Hs} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{sticks} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{N}\PY{p}{)}\PY{p}{:}
+                \PY{n}{newMolecules} \PY{o}{=} \PYZbs{}
+                    \PY{n}{numba}\PY{o}{.}\PY{n}{typed}\PY{o}{.}\PY{n}{List}\PY{p}{(}\PY{p}{[}\PY{n}{molecule}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{molecule} \PY{o+ow}{in} \PY{n}{molecules}\PY{p}{]}\PY{p}{)}
+                \PY{n}{dont}\PY{p}{,} \PY{n}{realNewSticks} \PY{o}{=} \PY{n}{mutate}\PY{p}{(}\PY{n}{newMolecules}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,}
+                                             \PY{n}{angleSigma}\PY{o}{=}\PY{n}{angleSigma}\PY{p}{,} 
+                                             \PY{n}{removeBondProb}\PY{o}{=}\PY{n}{removeBondProb}\PY{p}{)}
+                \PY{n}{ΔH} \PY{o}{=} \PY{n}{H}\PY{p}{(}\PY{n}{newMolecules}\PY{p}{,} \PY{n}{α}\PY{o}{=}\PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{o}{=}\PY{n}{β}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,} 
+                       \PY{n}{rCutoffLocalForce}\PY{o}{=}\PY{n}{rCutoffLocalForce}\PY{p}{,} \PY{n}{bindingPower}\PY{o}{=}\PY{n}{bindingPower}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{oldH}
+                \PY{n}{r} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{p}{)}
+        
+                \PY{n}{newSticks} \PY{o}{=} \PY{l+m+mi}{0}
+                \PY{k}{if} \PY{n}{r} \PY{o}{\PYZlt{}} \PY{n}{np}\PY{o}{.}\PY{n}{minimum}\PY{p}{(}\PY{l+m+mf}{1.}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{ΔH} \PY{o}{/} \PY{n}{T}\PY{p}{)}\PY{p}{)} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{dont}\PY{p}{:}
+                    \PY{n}{molecules} \PY{o}{=} \PY{n}{newMolecules}
+                    \PY{n}{oldH} \PY{o}{+}\PY{o}{=} \PY{n}{ΔH}
+                    \PY{n}{newSticks} \PY{o}{=} \PY{n}{realNewSticks}
+        
+                \PY{n}{Hs}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{oldH}\PY{p}{)}
+                \PY{n}{sticks}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{newSticks}\PY{p}{)}
+            \PY{k}{return} \PY{p}{(}\PY{n}{Hs}\PY{p}{,} \PY{n}{sticks}\PY{p}{)}
+        
+        \PY{k}{def} \PY{n+nf}{slow\PYZus{}run}\PY{p}{(}\PY{n}{molecules}\PY{p}{,} \PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{p}{,} \PY{n}{rCutoff}\PY{p}{,} \PY{n}{rCutoffLocalForce}\PY{p}{,} 
+                     \PY{n}{bindingPower}\PY{p}{,} \PY{n}{angleSigma}\PY{p}{,} \PY{n}{removeBondProb}\PY{p}{,} \PY{n}{T}\PY{p}{,} \PY{n}{N}\PY{p}{)}\PY{p}{:}
+            \PY{n}{oldH} \PY{o}{=} \PY{n}{H}\PY{p}{(}\PY{n}{molecules}\PY{p}{,} \PY{n}{α}\PY{o}{=}\PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{o}{=}\PY{n}{β}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,} 
+                     \PY{n}{rCutoffLocalForce}\PY{o}{=}\PY{n}{rCutoffLocalForce}\PY{p}{,} \PY{n}{bindingPower}\PY{o}{=}\PY{n}{bindingPower}\PY{p}{)}
+            \PY{n}{Hs} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{sticks} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            
+            \PY{n}{allSteps} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{N}\PY{p}{)}\PY{p}{:}
+                \PY{n}{newMolecules} \PY{o}{=} \PYZbs{}
+                    \PY{n}{numba}\PY{o}{.}\PY{n}{typed}\PY{o}{.}\PY{n}{List}\PY{p}{(}\PY{p}{[}\PY{n}{molecule}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{molecule} \PY{o+ow}{in} \PY{n}{molecules}\PY{p}{]}\PY{p}{)}
+                \PY{n}{dont}\PY{p}{,} \PY{n}{realNewSticks} \PY{o}{=} \PY{n}{mutate}\PY{p}{(}\PY{n}{newMolecules}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,} 
+                                             \PY{n}{angleSigma}\PY{o}{=}\PY{n}{angleSigma}\PY{p}{,} 
+                                             \PY{n}{removeBondProb}\PY{o}{=}\PY{n}{removeBondProb}\PY{p}{)}
+                \PY{n}{ΔH} \PY{o}{=} \PY{n}{H}\PY{p}{(}\PY{n}{newMolecules}\PY{p}{,} \PY{n}{α}\PY{o}{=}\PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{o}{=}\PY{n}{β}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,} 
+                       \PY{n}{rCutoffLocalForce}\PY{o}{=}\PY{n}{rCutoffLocalForce}\PY{p}{,} \PY{n}{bindingPower}\PY{o}{=}\PY{n}{bindingPower}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{oldH}
+                \PY{n}{r} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{p}{)}
+        
+                \PY{n}{newSticks} \PY{o}{=} \PY{l+m+mi}{0}
+                \PY{k}{if} \PY{n}{r} \PY{o}{\PYZlt{}} \PY{n}{np}\PY{o}{.}\PY{n}{minimum}\PY{p}{(}\PY{l+m+mf}{1.}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{ΔH} \PY{o}{/} \PY{n}{T}\PY{p}{)}\PY{p}{)} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{dont}\PY{p}{:}
+                    \PY{n}{molecules} \PY{o}{=} \PY{n}{newMolecules}
+                    \PY{n}{oldH} \PY{o}{+}\PY{o}{=} \PY{n}{ΔH}
+                    \PY{n}{newSticks} \PY{o}{=} \PY{n}{realNewSticks}
+                    
+                            
+                \PY{n}{allSteps}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{molecules}\PY{p}{)}
+        
+                \PY{n}{Hs}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{oldH}\PY{p}{)}
+                \PY{n}{sticks}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{newSticks}\PY{p}{)}
+            \PY{k}{return} \PY{p}{(}\PY{n}{Hs}\PY{p}{,} \PY{n}{sticks}\PY{p}{,} \PY{n}{allSteps}\PY{p}{)}
+\end{Verbatim}
+
+    This sets up a simple system of two dna chains, one with 10 elements,
+one with 5 elements and matching bases, so that each point in the one
+chain can bind to each point in the other chain.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{dimension} \PY{o}{=} \PY{l+m+mi}{2}
+        
+        \PY{n}{baseSpacing} \PY{o}{=} \PY{l+m+mi}{1}
+        \PY{n}{rCutoff} \PY{o}{=} \PY{l+m+mf}{0.2} \PY{c+c1}{\PYZsh{}baseSpacing /4}
+        \PY{n}{β} \PY{o}{=} \PY{l+m+mi}{10}
+        \PY{n}{bindingPower} \PY{o}{=} \PY{l+m+mi}{4}
+        \PY{n}{rCutoffLocalForce} \PY{o}{=} \PY{n}{rCutoff} \PY{o}{*} \PY{l+m+mi}{4}
+        \PY{n}{α} \PY{o}{=} \PY{l+m+mf}{0.001}
+        \PY{n}{T} \PY{o}{=} \PY{l+m+mi}{1} \PY{o}{/} \PY{l+m+mi}{100}
+        \PY{n}{angleSigma} \PY{o}{=} \PY{l+m+mf}{1.0}
+        
+        \PY{n}{removeBondProb} \PY{o}{=} \PY{l+m+mf}{0.1}
+        
+        \PY{n}{scaffoldNucleotide} \PY{o}{=} \PY{p}{[}\PY{o}{*}\PY{p}{(}\PY{p}{[}\PY{n}{Bases}\PY{o}{.}\PY{n}{T}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{10}\PY{p}{)}\PY{p}{]}
+        \PY{n}{stapleNucleotide} \PY{o}{=} \PY{p}{[}\PY{o}{*}\PY{p}{(}\PY{p}{[}\PY{n}{Bases}\PY{o}{.}\PY{n}{A}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{]}
+        
+        \PY{n}{numberOfScaffoldNucleotides} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{scaffoldNucleotide}\PY{p}{)}
+        \PY{n}{numberOfStapleNucleotides} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{stapleNucleotide}\PY{p}{)}
+        \PY{n}{boxSize} \PY{o}{=} \PY{l+m+mi}{2} \PY{o}{*} \PY{p}{(}\PY{n}{numberOfScaffoldNucleotides} \PY{o}{+} \PY{n}{numberOfStapleNucleotides}\PY{p}{)} \PY{o}{*} \PY{n}{baseSpacing}
+        \PY{n}{scaffold} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{numberOfScaffoldNucleotides}\PY{p}{,} \PY{n}{dimension} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{float64}\PY{p}{)}
+        \PY{n}{staple} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{numberOfStapleNucleotides}\PY{p}{,} \PY{n}{dimension} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{float64}\PY{p}{)}
+        
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{numberOfScaffoldNucleotides}\PY{p}{)}\PY{p}{:}
+            \PY{n}{scaffold}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{scaffoldNucleotide}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+            \PY{n}{scaffold}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{boxSize} \PY{o}{/} \PY{l+m+mi}{4}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{4}
+            \PY{n}{scaffold}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{boxSize} \PY{o}{/} \PY{l+m+mi}{4}\PY{p}{)} \PY{o}{+} \PY{n}{baseSpacing} \PY{o}{*} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{4}
+        
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{numberOfStapleNucleotides}\PY{p}{)}\PY{p}{:}
+            \PY{n}{staple}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{stapleNucleotide}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+            \PY{n}{staple}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{boxSize} \PY{o}{/} \PY{l+m+mi}{4}\PY{p}{)} \PY{o}{+} \PY{n}{baseSpacing} \PY{o}{*} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{10} \PY{o}{+} \PY{l+m+mf}{0.25}
+            \PY{n}{staple}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{=} \PY{o}{+}\PY{p}{(}\PY{n}{boxSize} \PY{o}{/} \PY{l+m+mi}{4}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{3}
+        
+        
+        \PY{n}{molecules} \PY{o}{=} \PY{n}{generateMolecules}\PY{p}{(}\PY{n}{scaffold}\PY{p}{,} \PY{n}{staple}\PY{p}{)}
+        
+        \PY{n}{Hs}\PY{p}{,} \PY{n}{sticks} \PY{o}{=} \PY{n}{run}\PY{p}{(}\PY{n}{molecules}\PY{p}{,} \PY{n}{α}\PY{o}{=}\PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{o}{=}\PY{n}{β}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,} \PY{n}{T}\PY{o}{=}\PY{n}{T}\PY{p}{,} \PY{n}{N} \PY{o}{=} \PY{l+m+mi}{10000}\PY{p}{,}
+            \PY{n}{rCutoffLocalForce}\PY{o}{=}\PY{n}{rCutoffLocalForce}\PY{p}{,} \PY{n}{bindingPower}\PY{o}{=}\PY{n}{bindingPower}\PY{p}{,} 
+                         \PY{n}{angleSigma}\PY{o}{=}\PY{n}{angleSigma}\PY{p}{,} \PY{n}{removeBondProb}\PY{o}{=}\PY{n}{removeBondProb}\PY{p}{)}
+\end{Verbatim}
+
+    To visualize the system evolution over time, we can plot the two chains
+and convert the series of plots into an animation.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}10}]:} \PY{k}{def} \PY{n+nf}{animate}\PY{p}{(}\PY{n}{steps}\PY{p}{,} \PY{n}{step}\PY{o}{=}\PY{l+m+mi}{50}\PY{p}{)}\PY{p}{:}
+             \PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{p}{)}
+                 
+             \PY{k}{def} \PY{n+nf}{xydata}\PY{p}{(}\PY{n}{molecule}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{x} \PY{o}{=} \PY{p}{[}\PY{n}{point}\PY{o}{.}\PY{n}{coords}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n}{molecule}\PY{o}{.}\PY{n}{points}\PY{p}{]}
+                 \PY{n}{y} \PY{o}{=} \PY{p}{[}\PY{n}{point}\PY{o}{.}\PY{n}{coords}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{point} \PY{o+ow}{in} \PY{n}{molecule}\PY{o}{.}\PY{n}{points}\PY{p}{]}
+                 \PY{k}{return} \PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{)}
+             
+             \PY{n}{lines} \PY{o}{=} \PY{p}{[}\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{o}{*}\PY{n}{xydata}\PY{p}{(}\PY{n}{molecule}\PY{p}{)}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{o}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{for} \PY{n}{molecule} \PY{o+ow}{in} \PY{n}{molecules}\PY{p}{]}
+             
+             \PY{k}{def} \PY{n+nf}{init}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlim}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{boxSize}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{boxSize}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{)}
+                 \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}ylim}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{boxSize}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{boxSize}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{)}
+                 \PY{k}{return} \PY{n}{lines}
+         
+             \PY{k}{def} \PY{n+nf}{update}\PY{p}{(}\PY{n}{frame}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{molecules} \PY{o}{=} \PY{n}{steps}\PY{p}{[}\PY{n}{frame} \PY{o}{*} \PY{n}{step}\PY{p}{]}
+                 \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{molecule} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{molecules}\PY{p}{)}\PY{p}{:}
+                     \PY{n}{lines}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}data}\PY{p}{(}\PY{o}{*}\PY{n}{xydata}\PY{p}{(}\PY{n}{molecule}\PY{p}{)}\PY{p}{)}
+         
+                 \PY{k}{return} \PY{n}{lines}
+         
+             \PY{n}{ani} \PY{o}{=} \PY{n}{FuncAnimation}\PY{p}{(}\PY{n}{fig}\PY{p}{,} \PY{n}{update}\PY{p}{,} \PY{n}{frames}\PY{o}{=}\PY{n+nb}{len}\PY{p}{(}\PY{n}{steps}\PY{p}{)} \PY{o}{/}\PY{o}{/} \PY{n}{step}\PY{p}{,} 
+                                 \PY{n}{init\PYZus{}func}\PY{o}{=}\PY{n}{init}\PY{p}{,} \PY{n}{blit}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+             \PY{n}{plt}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+             \PY{k}{return} \PY{n}{ani}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}11}]:} \PY{n}{Hs}\PY{p}{,} \PY{n}{sticks}\PY{p}{,} \PY{n}{outMolecules} \PY{o}{=} \PYZbs{}
+             \PY{n}{slow\PYZus{}run}\PY{p}{(}\PY{n}{molecules}\PY{p}{,} \PY{n}{α}\PY{o}{=}\PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{o}{=}\PY{n}{β}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,} 
+                      \PY{n}{T}\PY{o}{=}\PY{n}{T}\PY{p}{,} \PY{n}{N} \PY{o}{=} \PY{l+m+mi}{10000}\PY{p}{,} \PY{n}{rCutoffLocalForce}\PY{o}{=}\PY{n}{rCutoffLocalForce}\PY{p}{,} 
+                      \PY{n}{bindingPower}\PY{o}{=}\PY{n}{bindingPower}\PY{p}{,} \PY{n}{angleSigma}\PY{o}{=}\PY{n}{angleSigma}\PY{p}{,} 
+                      \PY{n}{removeBondProb}\PY{o}{=}\PY{n}{removeBondProb}\PY{p}{)}
+\end{Verbatim}
+
+    This shows a example animation for the system setup above
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}12}]:} \PY{n}{animate}\PY{p}{(}\PY{n}{outMolecules}\PY{p}{)}
+\end{Verbatim}
+
+            \begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}12}]:} <matplotlib.animation.FuncAnimation at 0x7f6a9a79f4c0>
+\end{Verbatim}
+        
+    Finally, we examine the influence of some of the parameters. Here we
+look a different values for β and T. β controls the strength of the
+binding force and T is the temperature.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}13}]:} \PY{n}{dimension} \PY{o}{=} \PY{l+m+mi}{2}
+         
+         \PY{n}{baseSpacing} \PY{o}{=} \PY{l+m+mi}{1}
+         \PY{n}{rCutoff} \PY{o}{=} \PY{l+m+mf}{0.2}
+         \PY{n}{β} \PY{o}{=} \PY{l+m+mi}{10}
+         \PY{n}{bindingPower} \PY{o}{=} \PY{l+m+mi}{4}
+         \PY{n}{rCutoffLocalForce} \PY{o}{=} \PY{n}{rCutoff} \PY{o}{*} \PY{l+m+mi}{4}
+         \PY{n}{α} \PY{o}{=} \PY{l+m+mf}{0.001}
+         \PY{n}{T} \PY{o}{=} \PY{l+m+mi}{1} \PY{o}{/} \PY{l+m+mi}{100}
+         \PY{n}{angleSigma} \PY{o}{=} \PY{l+m+mf}{1.0}
+         
+         \PY{n}{removeBondProb} \PY{o}{=} \PY{l+m+mf}{0.1}
+         
+         \PY{n}{scaffoldNucleotide} \PY{o}{=} \PY{p}{[}\PY{o}{*}\PY{p}{(}\PY{p}{[}\PY{n}{Bases}\PY{o}{.}\PY{n}{T}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{10}\PY{p}{)}\PY{p}{]}
+         \PY{n}{stapleNucleotide} \PY{o}{=} \PY{p}{[}\PY{o}{*}\PY{p}{(}\PY{p}{[}\PY{n}{Bases}\PY{o}{.}\PY{n}{A}\PY{p}{]} \PY{o}{*} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{]}
+         
+         \PY{n}{numberOfScaffoldNucleotides} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{scaffoldNucleotide}\PY{p}{)}
+         \PY{n}{numberOfStapleNucleotides} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{stapleNucleotide}\PY{p}{)}
+         \PY{n}{boxSize} \PY{o}{=} \PY{l+m+mi}{2} \PY{o}{*} \PY{p}{(}\PY{n}{numberOfScaffoldNucleotides} \PY{o}{+} 
+                        \PY{n}{numberOfStapleNucleotides}\PY{p}{)} \PY{o}{*} \PY{n}{baseSpacing}
+         \PY{n}{scaffold} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{numberOfScaffoldNucleotides}\PY{p}{,} \PY{n}{dimension} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{float64}\PY{p}{)}
+         \PY{n}{staple} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{numberOfStapleNucleotides}\PY{p}{,} \PY{n}{dimension} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{float64}\PY{p}{)}
+         
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{numberOfScaffoldNucleotides}\PY{p}{)}\PY{p}{:}
+             \PY{n}{scaffold}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{scaffoldNucleotide}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+             \PY{n}{scaffold}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{boxSize} \PY{o}{/} \PY{l+m+mi}{4}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{4}
+             \PY{n}{scaffold}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{boxSize} \PY{o}{/} \PY{l+m+mi}{4}\PY{p}{)} \PY{o}{+} \PY{n}{baseSpacing} \PY{o}{*} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{4}
+         
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{numberOfStapleNucleotides}\PY{p}{)}\PY{p}{:}
+             \PY{n}{staple}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{n}{stapleNucleotide}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+             \PY{n}{staple}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{boxSize} \PY{o}{/} \PY{l+m+mi}{4}\PY{p}{)} \PY{o}{+} \PY{n}{baseSpacing} \PY{o}{*} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{10} \PY{o}{+} \PY{l+m+mf}{0.25}
+             \PY{n}{staple}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{=} \PY{o}{+}\PY{p}{(}\PY{n}{boxSize} \PY{o}{/} \PY{l+m+mi}{4}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{3}
+         
+         
+         \PY{n}{molecules} \PY{o}{=} \PY{n}{generateMolecules}\PY{p}{(}\PY{n}{scaffold}\PY{p}{,} \PY{n}{staple}\PY{p}{)}
+         
+         \PY{k}{def} \PY{n+nf}{getExperimentData}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+             \PY{n}{temps} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{logspace}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{)}
+             \PY{n}{times} \PY{o}{=} \PY{l+m+mi}{10}
+             \PY{n}{bethas} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{logspace}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{)}
+             \PY{n}{plotBethas}\PY{p}{,} \PY{n}{plotTemps}\PY{p}{,} \PY{n}{plotSticks}\PY{p}{,} \PY{n}{plotHs}\PY{p}{,} \PY{n}{expNumbers} \PY{o}{=} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}
+             \PY{n}{ex} \PY{o}{=} \PY{l+m+mi}{0} 
+             \PY{k}{for} \PY{n}{betha} \PY{o+ow}{in} \PY{n}{bethas}\PY{p}{:}
+                 \PY{k}{for} \PY{n}{temp} \PY{o+ow}{in} \PY{n}{temps}\PY{p}{:}
+                     \PY{n}{ex} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+                     \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{times}\PY{p}{)}\PY{p}{:}
+                         \PY{n}{Hs}\PY{p}{,} \PY{n}{sticks} \PY{o}{=} \PY{n}{run}\PY{p}{(}\PY{n}{molecules}\PY{p}{,} \PY{n}{α}\PY{o}{=}\PY{n}{α}\PY{p}{,} \PY{n}{β}\PY{o}{=}\PY{n}{betha}\PY{p}{,} \PY{n}{rCutoff}\PY{o}{=}\PY{n}{rCutoff}\PY{p}{,} \PY{n}{T}\PY{o}{=}\PY{n}{temp}\PY{p}{,} 
+                                          \PY{n}{N} \PY{o}{=} \PY{l+m+mi}{10000}\PY{p}{,} \PY{n}{rCutoffLocalForce}\PY{o}{=}\PY{n}{rCutoffLocalForce}\PY{p}{,} 
+                                          \PY{n}{bindingPower}\PY{o}{=}\PY{n}{bindingPower}\PY{p}{,} \PY{n}{angleSigma}\PY{o}{=}\PY{n}{angleSigma}\PY{p}{,} 
+                                          \PY{n}{removeBondProb}\PY{o}{=}\PY{n}{removeBondProb}\PY{p}{)}
+                         \PY{n}{plotBethas}\PY{o}{.}\PY{n}{append}\PY{p}{(} \PY{n}{betha} \PY{p}{)}
+                         \PY{n}{plotTemps}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{temp}\PY{p}{)}
+                         \PY{n}{plotSticks}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{sticks}\PY{p}{)}
+                         \PY{n}{plotHs}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{plotHs}\PY{p}{)}
+                         \PY{n}{expNumbers}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{ex}\PY{p}{)}
+             \PY{k}{return} \PY{n}{plotBethas}\PY{p}{,} \PY{n}{plotTemps}\PY{p}{,} \PY{n}{plotSticks}\PY{p}{,} \PY{n}{plotHs}\PY{p}{,} \PY{n}{expNumbers}
+                     
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}14}]:} \PY{n}{plotBethas}\PY{p}{,} \PY{n}{plotTemps}\PY{p}{,} \PY{n}{plotSticks}\PY{p}{,} \PY{n}{plotHs}\PY{p}{,} \PY{n}{expNumbers} \PY{o}{=} \PY{n}{getExperimentData}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}15}]:} \PY{k}{def} \PY{n+nf}{logGridFromCenters}\PY{p}{(}\PY{n}{centers}\PY{p}{)}\PY{p}{:}
+             \PY{n}{spacing} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{centers}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{/} \PY{n}{centers}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+             \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{logspace}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log10}\PY{p}{(}\PY{n}{centers}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{/} \PY{n}{spacing}\PY{p}{)}\PY{p}{,}
+                                \PY{n}{np}\PY{o}{.}\PY{n}{log10}\PY{p}{(}\PY{n}{centers}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{*} \PY{n}{spacing}\PY{p}{)}\PY{p}{,}
+                                \PY{n+nb}{len}\PY{p}{(}\PY{n}{centers}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}
+         
+         \PY{n}{βs} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sort}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{n}{plotBethas}\PY{p}{)}\PY{p}{)}
+         \PY{n}{Ts} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sort}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{n}{plotTemps}\PY{p}{)}\PY{p}{)}
+         \PY{n}{plotSticks} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{plotSticks}\PY{p}{)}
+         
+         \PY{n}{values} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{empty}\PY{p}{(}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{βs}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{Ts}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+         \PY{n}{std} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{empty}\PY{p}{(}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{βs}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{Ts}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+         
+         \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{β} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{βs}\PY{p}{)}\PY{p}{:}
+             \PY{k}{for} \PY{n}{j}\PY{p}{,} \PY{n}{T} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{Ts}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{sticks} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{plotSticks}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{p}{(}\PY{n}{plotBethas} \PY{o}{==} \PY{n}{β}\PY{p}{)} 
+                                                     \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{plotTemps} \PY{o}{==} \PY{n}{T}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+                 \PY{n}{values}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{sticks}\PY{p}{)}
+                 \PY{n}{std}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{sticks}\PY{p}{)} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{sticks}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{11}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{)}\PY{p}{)}
+         \PY{n}{x}\PY{p}{,} \PY{n}{y} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{meshgrid}\PY{p}{(}\PY{n}{βs}\PY{p}{,} \PY{n}{Ts}\PY{p}{)}
+         
+         
+         
+         \PY{n}{βsgrid} \PY{o}{=} \PY{n}{logGridFromCenters}\PY{p}{(}\PY{n}{βs}\PY{p}{)}
+         \PY{n}{Tsgrid} \PY{o}{=} \PY{n}{logGridFromCenters}\PY{p}{(}\PY{n}{Ts}\PY{p}{)}
+         \PY{n}{x}\PY{p}{,} \PY{n}{y} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{meshgrid}\PY{p}{(}\PY{n}{βsgrid}\PY{p}{,} \PY{n}{Tsgrid}\PY{p}{)}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{pcolor}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{values}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{yscale}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{log}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xscale}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{log}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{T}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{β \PYZhy{} Local Force}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Local Force and Temperature variation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{colorbar}\PY{p}{(}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{11}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{)}\PY{p}{)}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{pcolor}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{std}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Greys}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{yscale}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{log}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xscale}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{log}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{T}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{β \PYZhy{} Local Force}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{colorbar}\PY{p}{(}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_24_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_24_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can see, as expected, with increasing \texttt{T} and decreasing
+\texttt{β}, the number of new bonds formed increases, up to a point,
+where \texttt{T} is so big, that the globally acting force that pulls
+the chains together is no longer strong enough and the chains no longer
+get close together.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}
